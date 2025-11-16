@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { users, hospitals } from '@/lib/schema';
+import { db, insertUser } from '@/lib/db';
+import { hospitals } from '@/lib/schema';
 import { hashPassword } from '@/lib/auth';
 
 const registerSchema = z.object({
@@ -31,35 +31,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
     }
     
-    // Using a transaction to ensure both hospital and user are created successfully
-    const result = await db.transaction(async (tx) => {
-        // Create the hospital first
-        const [newHospital] = await tx.insert(hospitals).values({
-            name: hospitalName,
-        }).returning({ id: hospitals.id });
+    // Create the hospital first
+    const [newHospital] = await db.insert(hospitals).values({
+      name: hospitalName,
+    }).returning({ id: hospitals.id });
 
-        if (!newHospital || !newHospital.id) {
-            tx.rollback();
-            return { error: 'Failed to create hospital' };
-        }
-
-        const hashedPassword = await hashPassword(password);
-
-        // Create the user with the doctor role and associate with the new hospital
-        await tx.insert(users).values({
-            fullName,
-            email,
-            password: hashedPassword,
-            role: 'doctor',
-            hospitalId: newHospital.id,
-        });
-
-        return { success: true };
-    });
-
-    if (result.error) {
-        return NextResponse.json({ error: result.error }, { status: 500 });
+    if (!newHospital || !newHospital.id) {
+      return NextResponse.json({ error: 'Failed to create hospital' }, { status: 500 });
     }
+
+    const hashedPassword = await hashPassword(password);
+
+    // Create the user with the doctor role and associate with the new hospital
+    await insertUser({
+      fullName,
+      email,
+      password: hashedPassword,
+      role: 'doctor',
+      hospitalId: newHospital.id,
+    });
 
     return NextResponse.json({ message: 'Hospital and doctor registered successfully' }, { status: 201 });
 

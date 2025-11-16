@@ -79,8 +79,8 @@ export default function WhyMediQ() {
         <div className="mt-16 max-w-4xl mx-auto">
             <Tabs defaultValue="hospital" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="hospital">Why Hospitals Need It</TabsTrigger>
-                    <TabsTrigger value="nigeria">Why It's Crucial for Nigeria</TabsTrigger>
+                  <TabsTrigger value="hospital">Why Hospitals Need It</TabsTrigger>
+                  <TabsTrigger value="nigeria">Why It&apos;s Crucial for Nigeria</TabsTrigger>
                 </TabsList>
                 <TabsContent value="hospital">
                     <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

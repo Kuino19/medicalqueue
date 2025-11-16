@@ -1,9 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { summaries, users, chats, queue } from '@/lib/schema';
-import { desc, eq, asc } from 'drizzle-orm';
+import { db, _updateQueueStatusDb } from '@/lib/db';
+import { summaries, queue, chats } from '@/lib/schema';
+import { eq, asc } from 'drizzle-orm';
 import { format } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 
@@ -37,7 +37,7 @@ export async function getPatientQueue(input: z.infer<typeof getQueueSchema>) {
     return queueData.map(q => ({
         id: q.id.toString(),
         patientName: q.patient?.fullName || 'Unknown Patient',
-        date: format(new Date(q.createdAt! * 1000), 'yyyy-MM-dd HH:mm'),
+        date: q.createdAt ? format(q.createdAt, 'yyyy-MM-dd HH:mm') : 'Unknown',
         status: q.status,
         summaryId: q.summaryId,
         triageCode: q.summary?.triageCode,
@@ -75,9 +75,16 @@ export async function getSummaryDetails(input: z.infer<typeof getSummaryDetailsS
         orderBy: (chats, { asc }) => [asc(chats.createdAt)],
     });
 
+    // Transform Date objects to timestamps (milliseconds since epoch)
     return {
-        summary,
-        conversation
+        summary: {
+            ...summary,
+            createdAt: summary.createdAt instanceof Date ? summary.createdAt.getTime() : summary.createdAt,
+        },
+        conversation: conversation.map(chat => ({
+            ...chat,
+            createdAt: chat.createdAt instanceof Date ? chat.createdAt.getTime() : chat.createdAt,
+        }))
     };
 }
 
@@ -94,9 +101,7 @@ export async function updateQueueStatus(input: z.infer<typeof updateQueueStatusS
     }
     
     try {
-        await db.update(queue)
-            .set({ status: parsedInput.data.status })
-            .where(eq(queue.id, parsedInput.data.queueId));
+        await _updateQueueStatusDb(parsedInput.data.queueId, parsedInput.data.status);
         
         revalidatePath('/dashboard'); // This tells Next.js to refresh the dashboard page data
         return { success: true, message: `Status updated to ${parsedInput.data.status}` };

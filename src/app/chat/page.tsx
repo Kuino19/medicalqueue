@@ -162,5 +162,6 @@ export default function ChatPage() {
 
 // Basic polyfill for crypto.randomUUID
 if (typeof window !== 'undefined' && typeof crypto.randomUUID === 'undefined') {
-  crypto.randomUUID = uuidv4;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  crypto.randomUUID = uuidv4 as any;
 }

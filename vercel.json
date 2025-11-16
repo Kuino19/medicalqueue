@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd src && npm run build",
+  "outputDirectory": "src/.next",
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "DATABASE_AUTH_TOKEN": "@database_auth_token",
+    "JWT_SECRET": "@jwt_secret",
+    "HF_API_KEY": "@hf_api_key"
+  }
+}

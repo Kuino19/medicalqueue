@@ -1,12 +1,8 @@
 {
-  "buildCommand": "cd src && npm install && npm run build",
-  "outputDirectory": "src/.next",
-  "installCommand": "cd src && npm install",
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "DATABASE_AUTH_TOKEN": "@database_auth_token",
-    "JWT_SECRET": "@jwt_secret",
-    "HF_API_KEY": "@hf_api_key"
-  }
+  "root": "src",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next"
 }
+
+
 

@@ -1,6 +1,7 @@
 {
-  "buildCommand": "npm install --prefix=src && npm run build --prefix=src",
+  "buildCommand": "cd src && npm install && npm run build",
   "outputDirectory": "src/.next",
+  "installCommand": "cd src && npm install",
   "env": {
     "DATABASE_URL": "@database_url",
     "DATABASE_AUTH_TOKEN": "@database_auth_token",

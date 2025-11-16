@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd src && npm run build",
+  "buildCommand": "npm install --prefix=src && npm run build --prefix=src",
   "outputDirectory": "src/.next",
   "env": {
     "DATABASE_URL": "@database_url",
@@ -8,3 +8,4 @@
     "HF_API_KEY": "@hf_api_key"
   }
 }
+

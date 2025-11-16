@@ -1,8 +1,16 @@
 {
   "buildCommand": "cd src && npm run build",
   "outputDirectory": "src/.next",
-  "installCommand": "cd src && npm install"
+  "installCommand": "cd src && npm install",
+  "env": {
+    "JWT_SECRET": "build-time-secret-key-change-in-production",
+    "DATABASE_URL": "file:./local.db",
+    "DATABASE_AUTH_TOKEN": "",
+    "HF_API_KEY": "hf_"
+  }
 }
+
+
 
 
 
